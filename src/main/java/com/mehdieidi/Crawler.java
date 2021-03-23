@@ -40,7 +40,7 @@ public class Crawler {
 //                if (element.attr("href").contains("%")) {
 //                    crawl(element.attr("abs:href"));
 //                }
-                System.out.println(element.text());
+                System.out.println(element.parent().parent().parent().parent().parent().parent().getElementsByTag("a"));
             }
         }
     }
