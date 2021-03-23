@@ -35,10 +35,6 @@ public class Crawler {
 
             Document document = Jsoup.connect("https://www.digikala.com/").get();
 
-            if (document.text().contains("منتخب")) {
-                System.out.println(URL);
-            }
-
             Elements elements = document.getElementsByClass("c-new-price__discount");
             for (Element element : elements) {
 //                if (element.attr("href").contains("%")) {
