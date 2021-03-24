@@ -1,10 +1,8 @@
 package com.mehdieidi;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.jsoup.Jsoup;
@@ -13,40 +11,84 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Crawler {
-    private static final HashSet<String> seen = new HashSet<>();
-//    public static DB db = new DB();
+    private final HashSet<String> seenUrls = new HashSet<>();
+    private final ArrayList<String> categoriesList = new ArrayList<>();
 
-    public static void crawl(String URL) throws SQLException, IOException {
-        System.out.println("Crawler Started");
-        String query = "SELECT * FROM Crawler WHERE URL = '" + URL + "'";
-//        ResultSet resultSet = db.runQuery(query);
+    public Crawler(String baseUrl) throws IOException {
+        Document document = Jsoup.connect(baseUrl).get();
+        Elements categories = document.getElementsByClass("c-navi-new-list__inner-categories").get(0).getElementsByTag("a");
 
-        boolean urlIsSeen = seen.contains(URL);
+        for (Element element : categories) {
+            categoriesList.add("http://digikala.com" + element.getElementsByTag("a").attr("href"));
+        }
+    }
 
-        if (!urlIsSeen) {
-//            query = "INSERT INTO `Crawler`.`Data` " + "(`URL`) VALUES " + "(?);";
-//            PreparedStatement preparedStatement = db.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-//            preparedStatement.setString(1, URL);
-//            preparedStatement.execute();
-
-            seen.add(URL);
-
-            System.out.println(URL);
-
-            Document document = Jsoup.connect("https://www.digikala.com/").get();
-
-            Elements elements = document.getElementsByClass("c-new-price__discount");
-            for (Element element : elements) {
-//                if (element.attr("href").contains("%")) {
-//                    crawl(element.attr("abs:href"));
-//                }
-                System.out.println(element.parent().parent().parent().parent().parent().parent().getElementsByTag("a"));
+    public void crawl() {
+        for (String category : categoriesList) {
+            try {
+                crawlCategory(category);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
-//        db.runQuery2("TRUNCATE Data");
-        crawl("https://www.digikala.com/");
+    private void crawlCategory(String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
+        Elements subCategories = document.getElementsByClass("c-catalog__plain-list-link");
+
+        for (Element subCategory : subCategories) {
+            crawlCategoryPage("https://digikala.com" + subCategory.attr("href"));
+        }
     }
+
+    private void crawlCategoryPage(String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
+        Elements subCategoriesPages = document.getElementsByClass("c-pager__item");
+
+        crawlPage(url);
+
+        for (Element page : subCategoriesPages) {
+            String pageAttr = page.attr("href");
+
+            if (!pageAttr.equals("javascript:")) {
+                crawlPage("https://digikala.com" + pageAttr);
+            }
+        }
+    }
+
+    private void crawlPage(String url) throws IOException {
+        System.out.println("=================================================================================");
+
+        Document document = Jsoup.connect(url).get();
+
+        Elements discountedGoods = document.getElementsByClass("c-new-price__discount");
+        for (Element element : discountedGoods) {
+            System.out.println("http://digikala.com" + element.parent().parent().parent().parent().parent().parent().getElementsByTag("a").get(0).attr("href"));
+            System.out.println("=================================================================================");
+        }
+    }
+
+//    public void crawl2(String URL) throws IOException {
+//        System.out.println("Crawler Started...");
+//
+//        if (!seenUrls.contains(URL)) {
+//            seenUrls.add(URL);
+//
+//            System.out.println(URL + " is being processed");
+//
+//            Document document = Jsoup.connect("https://www.digikala.com/").get();
+//
+//            Elements discountedGoods = document.getElementsByClass("c-new-price__discount");
+//            for (Element element : discountedGoods) {
+////                if (element.attr("href").contains("%")) {
+////                    crawl(element.attr("abs:href"));
+////                }
+//                System.out.println("http://digikala.com" + element.parent().parent().parent().parent().parent().parent().getElementsByTag("a").get(0).attr("href"));
+//                System.out.println("--------------------------------------------------------------------------------------------------");
+//            }
+//
+//
+//        }
+//    }
 }
