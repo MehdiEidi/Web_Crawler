@@ -62,9 +62,9 @@ public class Crawler {
 
         Document document = Jsoup.connect(url).get();
 
-        Elements discountedGoods = document.getElementsByClass("c-new-price__discount");
+        Elements discountedGoods = document.getElementsByClass("c-price__discount-oval");
         for (Element element : discountedGoods) {
-            System.out.println("http://digikala.com" + element.parent().parent().parent().parent().parent().parent().getElementsByTag("a").get(0).attr("href"));
+            System.out.println("http://digikala.com" + element.parent().parent().parent().parent().getElementsByTag("a").get(0).attr("href"));
             System.out.println("=================================================================================");
         }
     }
