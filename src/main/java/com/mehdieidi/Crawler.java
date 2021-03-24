@@ -3,7 +3,6 @@ package com.mehdieidi;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,7 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Crawler {
-    private final HashSet<String> seenUrls = new HashSet<>();
     private final ArrayList<String> categoriesList = new ArrayList<>();
 
     public Crawler(String baseUrl) throws IOException {
@@ -68,27 +66,4 @@ public class Crawler {
             System.out.println("=================================================================================");
         }
     }
-
-//    public void crawl2(String URL) throws IOException {
-//        System.out.println("Crawler Started...");
-//
-//        if (!seenUrls.contains(URL)) {
-//            seenUrls.add(URL);
-//
-//            System.out.println(URL + " is being processed");
-//
-//            Document document = Jsoup.connect("https://www.digikala.com/").get();
-//
-//            Elements discountedGoods = document.getElementsByClass("c-new-price__discount");
-//            for (Element element : discountedGoods) {
-////                if (element.attr("href").contains("%")) {
-////                    crawl(element.attr("abs:href"));
-////                }
-//                System.out.println("http://digikala.com" + element.parent().parent().parent().parent().parent().parent().getElementsByTag("a").get(0).attr("href"));
-//                System.out.println("--------------------------------------------------------------------------------------------------");
-//            }
-//
-//
-//        }
-//    }
 }

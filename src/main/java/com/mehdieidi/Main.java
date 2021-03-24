@@ -13,7 +13,6 @@ public class Main {
         }
 
 
-            crawler.crawl();
-
+        crawler.crawl();
     }
 }
